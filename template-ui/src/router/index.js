@@ -51,7 +51,10 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '管理系统demo', icon: 'dashboard' }
+      meta: {
+        title: '主面板',
+        icon: 'dashboard'
+      }
     }]
   },
 
@@ -65,15 +68,18 @@ export const constantRoutes = [
       icon: 'el-icon-s-help'
     },
     children: [
+
       { //车辆列表
         path: 'vehicle',
         name: 'Vehicle',
+        // alwaysShow: true,
         meta: {
           title: '车辆列表',
           icon: 'el-icon-s-help'
         },
-        component: () => import('@/views/car/vehicle/index')
+        component: () => import('@/views/car/vehicle/index'),
       },
+
       { //机械列表
         path: 'machine',
         name: 'Machine',
@@ -82,7 +88,24 @@ export const constantRoutes = [
           icon: 'el-icon-s-help'
         },
         component: () => import('@/views/car/machine/index')
+      },
+
+      { //工时列表（根据车牌号）
+        hidden: true,
+        path: 'work/:plateNumber',
+        name: 'Work',
+        meta: {title: '工时列表'},
+        component: () => import('@/views/car/work/index')
+      },
+
+      { //轨迹详情
+        hidden: true,
+        path: 'map',
+        name: 'Map',
+        meta: { title: '轨迹详情' },
+        component: () => import('@/views/car/map/index')
       }
+
     ]
   },
 
@@ -96,6 +119,7 @@ export const constantRoutes = [
       icon: 'el-icon-s-help'
     },
     children: [
+
       { //车辆类型
         path: 'vehicle',
         name: 'VehicleModel',
@@ -105,6 +129,7 @@ export const constantRoutes = [
           icon: 'el-icon-s-help'
         }
       },
+
       { //机械类型
         path: 'machine',
         name: 'MachineModel',
@@ -229,7 +254,7 @@ export const constantRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRoutes,
 })
 
 const router = createRouter()

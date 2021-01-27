@@ -12,7 +12,7 @@ export function getVehicleList() {
     url: '/car/allVehicle',
     type: 'GET'
   }
-  return localRequest(config);
+  return blctekRequest(config);
 }
 
 /**

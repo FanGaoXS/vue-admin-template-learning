@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 
+//全局变量
 const state = {
   sidebar: {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
@@ -8,6 +9,7 @@ const state = {
   device: 'desktop'
 }
 
+//全局同步函数
 const mutations = {
   TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened
@@ -28,6 +30,7 @@ const mutations = {
   }
 }
 
+//全局异步函数
 const actions = {
   toggleSideBar({ commit }) {
     commit('TOGGLE_SIDEBAR')

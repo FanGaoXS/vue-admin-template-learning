@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    {{$route.params.plateNumber}}
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -66,7 +65,6 @@ export default {
   },
   created() {
     this.fetchData()
-    console.log('params',this.$route.params);
   },
   methods: {
     fetchData() {

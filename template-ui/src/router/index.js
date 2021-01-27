@@ -58,53 +58,86 @@ export const constantRoutes = [
     }]
   },
 
-  { //工程用具
-    path: '/car',
+  { //工程监理
+    path: '/supervisor',
     component: Layout,
-    redirect: '/car/vehicle',
-    name: 'Car',
+    redirect: '/supervisor/vehicle',
+    name: 'Supervisor',
     meta: {
-      title: '工程用具',
-      icon: 'el-icon-s-help'
+      title: '工程监理',
+      icon: 'el-icon-s-order'
     },
     children: [
 
-      { //车辆列表
+      { //车辆监理
         path: 'vehicle',
         name: 'Vehicle',
         // alwaysShow: true,
         meta: {
-          title: '车辆列表',
-          icon: 'el-icon-s-help'
+          title: '车辆监理',
+        },
+        component: () => import('@/views/supervisor/vehicle/index'),
+      },
+
+      { //机械监理
+        path: 'machine',
+        name: 'Machine',
+        meta: {
+          title: '机械监理（待开发）',
+        },
+        component: () => import('@/views/supervisor/machine/index')
+      },
+
+      { //工时列表（根据车牌号）
+        hidden: true,
+        breadcrumb: false,
+        path: 'work/:plateNumber',
+        name: 'Work',
+        meta: {title: '工时列表'},
+        component: () => import('@/views/supervisor/work/index')
+      },
+
+      { //轨迹详情
+        hidden: true,
+        breadcrumb: false,
+        path: 'map/:plateNumber/:date/:mileage',
+        name: 'Map',
+        meta: { title: '轨迹详情' },
+        component: () => import('@/views/supervisor/map/index')
+      }
+
+    ]
+  },
+
+  { //工程用具
+    path: '/car',
+    component: Layout,
+    redirect: '/car/vehicleList',
+    name: 'Car',
+    meta: {
+      title: '工程用具',
+      icon: 'el-icon-s-fold'
+    },
+    children: [
+
+      { //车辆列表
+        path: 'vehicleList',
+        name: 'VehicleList',
+        // alwaysShow: true,
+        meta: {
+          title: '车辆列表（待开发）',
         },
         component: () => import('@/views/car/vehicle/index'),
       },
 
       { //机械列表
-        path: 'machine',
-        name: 'Machine',
+        path: 'machineList',
+        name: 'MachineList',
         meta: {
-          title: '机械列表',
-          icon: 'el-icon-s-help'
+          title: '机械列表（待开发）',
         },
         component: () => import('@/views/car/machine/index')
       },
-
-      { //工时列表（根据车牌号）
-        hidden: true,
-        path: 'work/:plateNumber',
-        name: 'Work',
-        meta: {title: '工时列表'},
-        component: () => import('@/views/car/work/index')
-      },
-
-      { //轨迹详情
-        hidden: true,
-        path: 'map',
-        name: 'Map',
-        meta: { title: '轨迹详情' },
-        component: () => import('@/views/car/map/index')
-      }
 
     ]
   },
@@ -116,7 +149,7 @@ export const constantRoutes = [
     name: 'Model',
     meta: {
       title: '类型管理',
-      icon: 'el-icon-s-help'
+      icon: 'el-icon-s-data'
     },
     children: [
 
@@ -125,8 +158,7 @@ export const constantRoutes = [
         name: 'VehicleModel',
         component: () => import('@/views/model/vehicle/index'),
         meta: {
-          title: '车辆类型',
-          icon: 'el-icon-s-help'
+          title: '车辆类型（待开发）',
         }
       },
 
@@ -135,8 +167,7 @@ export const constantRoutes = [
         name: 'MachineModel',
         component: () => import('@/views/model/machine/index'),
         meta: {
-          title: '机械类型',
-          icon: 'el-icon-s-help'
+          title: '机械类型（待开发）',
         }
       }
     ]

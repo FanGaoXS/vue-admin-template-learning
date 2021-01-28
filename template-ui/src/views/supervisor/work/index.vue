@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
 
-    <el-header style="margin-top: 10px">
+    <el-header style="margin-top: 10px"><!--页头（返回按钮）-->
       <el-page-header @back="goBack" content="工时详情">
       </el-page-header>
     </el-header>
@@ -9,17 +9,13 @@
     <el-table
       v-loading="listLoading"
       :data="workList"
-      element-loading-text="Loading"
+      element-loading-text="加载中···"
       :default-sort = "{prop: 'date', order: 'descending'}"
       border
       fit
     >
+      <!--:default-sort = "{prop: 'date', order: 'descending'}"默认排序列-->
       <!--highlight-current-row选中行高亮-->
-      <!--<el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>-->
       <el-table-column label="车牌号" align="center">
         {{ $route.params.plateNumber | plateNumberFilter }}
       </el-table-column>
@@ -30,7 +26,7 @@
       </el-table-column>
       <el-table-column label="里程数" align="center">
         <template slot-scope="scope">
-          {{ scope.row.mileage | mileageFilter }}
+          {{ scope.row.mileage | mileageFilter}}
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
@@ -41,7 +37,7 @@
             params: {    //携带以下参数
               plateNumber: scope.row.plateNumber,
               date: scope.row.date,
-              mileage:scope.row.mileage
+              mileage: scope.row.mileage
             }
           }">
             <el-button type="primary" size="small" icon="el-icon-edit">
@@ -66,7 +62,7 @@ import {
 
 import {
   plateNumberFilter,
-  mileageFilter
+  mileageFilter,
 } from "@/utils/globalFilters";
 
 import AMapLoader from '@/utils/AMap'
@@ -74,19 +70,24 @@ import AMapLoader from '@/utils/AMap'
 export default {
   filters: {
     plateNumberFilter(plateNumber){
-      return plateNumberFilter(plateNumber);
+      return plateNumberFilter(plateNumber); //使用globalFilters里的过滤器
     },
     mileageFilter(mileage){
-      return mileageFilter(mileage); //执行globalFilters里的过滤器
+      return mileageFilter(mileage); //使用globalFilters里的过滤器
     },
+    /**
+     * 将yyyy-mm-dd日期字符串转为yyyy/mm/dd类型的日期对象
+     * @param date
+     * @returns {string}
+     */
     dateFilter(date){
-      let objectDate = new Date(date);
+      let objectDate = new Date(date);//直接将日期字符串转为日期对象
       return objectDate.toLocaleDateString();
     }
   },
   data() {
     return {
-      workList: [
+      workList: [ //工时对象数组
         /*plateNumber,
         date,
         mileage*/
@@ -96,10 +97,12 @@ export default {
     }
   },
   created() {
+    // 异步加载utils里的高德地图官方js
+    // 因为这个页面需要利用高德官方组件GeometryUtil.distanceOfLine()来计算里程
     AMapLoader().then(AMap => {
-      this.map = AMap;
+      this.map = AMap; // 加载成功后将异步加载的高德原生js赋给this.map
       console.log('高德地图api加载成功');
-      this.fetchData();
+      this.fetchData(); //获取到数据并且填充
     }, e => {
       console.log('高德地图api加载失败',e)
     })
@@ -115,21 +118,21 @@ export default {
           // console.log(date);
           getPointListByPlateNumberAndDate(plateNumber,date).then(res=>{
             // console.log('res.data',res.data);
-            let lineArray = [];
+            let lineArray = []; //初始化一个临时数组
             for (let point of res.data) {
               // console.log('point',point);
               /*console.log('longitude_amap',point.longitude_amap);
               console.log('latitude_amap',point.latitude_amap);*/
-              lineArray.push([point.longitude_amap,point.latitude_amap]);
+              lineArray.push([point.longitude_amap,point.latitude_amap]); //将坐标点的经纬度赋值按顺序添加到临时数组中
             }
-            /*console.log('lineArray',lineArray);
-            console.log('AMap',this.map);*/
+            // console.log(lineArray);
+            //将临时数组扔到高德原生js的路径长度计算工具（此函数是异步！！切记）
             let mileage = this.map.GeometryUtil.distanceOfLine(lineArray);
-            // console.log(date+'->'+mileage);
+            // 将车牌号、日期、里程按顺序push到workList数组中
             this.workList.push({plateNumber, date, mileage});
           })
-          this.listLoading = false;
         }
+        this.listLoading = false;
       })
     },
     goBack(){

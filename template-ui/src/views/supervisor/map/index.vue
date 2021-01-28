@@ -9,27 +9,50 @@
     <el-amap vid="aMap"
              class="aMap"
              :center="center"
-             :zoom="zoom"><!--高德地图地图组件-->
+             :zoom="zoom"><!--高德地图地图容器组件-->
       <el-amap-polyline
         :path="path"
         :lineJoin="'round'"
-        strokeColor="#3366FF"
+        strokeColor="#409EFF"
+        strokeOpacity="0.8"
         strokeWeight="5"
         strokeStyle= "solid"
-        borderWeight= "2"
-        lineJoin="round"
       /><!--轨迹折线-->
+
+      <el-amap-marker
+        vid="startMarker"
+        :position="startMarker.position"
+        title="起点"
+      /><!--起点标记-->
+
+      <el-amap-text
+        text="起点"
+        :position="startMarker.position"
+        :offset="[0,-50]"
+      /><!--起点文字-->
+
+      <el-amap-marker
+        vid="endMarker"
+        :position="endMarker.position"
+        title="终点"
+      /><!--终点标记-->
+
+      <el-amap-text
+        text="终点"
+        :position="endMarker.position"
+        :offset="[0,-50]"
+      /><!--终点文字-->
 
     </el-amap>
 
-    <el-row :gutter="10">
+    <el-row :gutter="10"><!--响应式第一行-->
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
         <el-input :value="plateNumber | plateNumberFilter" readonly>
           <template slot="prepend">车牌号</template>
         </el-input>
       </el-col>
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
-        <el-input :value="mileage | mileageFilter" readonly>
+        <el-input :value="mileage | mileageFilter " readonly>
           <template slot="prepend">里程</template>
         </el-input>
       </el-col>
@@ -45,7 +68,7 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="10">
+    <el-row :gutter="10"><!--响应式第二行-->
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
         <el-input :value="startPoint | pointFilter" readonly>
           <template slot="prepend">起点</template>
@@ -78,7 +101,7 @@ import { getList } from '@/api/table'
 
 import {
   plateNumberFilter,
-  mileageFilter
+  mileageFilter,
 } from "@/utils/globalFilters";
 
 import {
@@ -89,20 +112,19 @@ export default {
   computed: {
     // 车牌号
     plateNumber() {
-      return this.$route.params.plateNumber;
-    },
-    // 里程数
-    mileage() {
-      return this.$route.params.mileage;
+      return this.$route.params.plateNumber; //取从上个页面传递过来的params中的参数
     },
     // 平均海拔
     aveAltitude() {
       let total = 0;
-      for (let point of this.pointList) {
+      for (let point of this.pointList) { //遍历出坐标点对象数组里的海拔
         total += point.altitude;
       }
-      let ave = total/(this.pointList.length);
+      let ave = total/(this.pointList.length); //求平均
       return ave.toFixed(3)+'米';
+    },
+    mileage() {
+      return this.$route.params.mileage; //取从上个页面传递过来的params中的参数
     },
     // 估算总耗油量（升/百公里）
     estimateFuelConsumptionAll() {
@@ -115,21 +137,23 @@ export default {
       return this.path[this.path.length-1];
     },
     startTime() {
-      if (this.pointList.length==0) return ;
+      if (this.pointList.length===0) return ;
       return this.pointList[0].record_time;
     },
     endTime() {
-      if (this.pointList.length==0) return ;
+      if (this.pointList.length===0) return ;
       return this.pointList[this.pointList.length-1].record_time;
     }
   },
   filters: {
+    // 将标准UTC时间转为易读的时间
     dateFilter(date){
       let objectDate = new Date(date);
       return objectDate.toLocaleDateString()+' '+objectDate.toLocaleTimeString();
     },
+    // 经纬度过滤器
     pointFilter(point){
-      if (point==undefined) return ;
+      if (point===undefined) return ;
       return '经度：'+point[0]+'，纬度：'+point[1];
     },
     plateNumberFilter(plateNumber) {
@@ -143,7 +167,7 @@ export default {
     return {
       zoom: 14,  //初始缩放级别（数字越大约精细，最大18）
       center: [104.066143,30.573095],   //地图中心点坐标（默认是成都市政府）
-      path:[
+      path:[ //符合高德地图规范的经纬度数组
         // [latitude_amap,longitude_amap]
       ],
       pointList: [  //坐标点对象数组
@@ -154,30 +178,35 @@ export default {
           record_time     //坐标点记录的时间
         }*/
       ],
-      listLoading: true
+      startMarker: { //起点坐标对象
+        position: [104.066143,30.573095] //必须给点标记一个初始坐标，否则会报错（）
+      },
+      endMarker: { //终点坐标对象
+        position: [104.066143,30.573095]
+      }
     }
   },
   created() {
     this.fetchData();
-    // console.log(this.$route.params);
   },
   methods: {
     fetchData() {
       let plateNumber = this.$route.params.plateNumber;
       let date = this.$route.params.date;
       // let mileage = this.$route.params.mileage;
-      getPointListByPlateNumberAndDate(plateNumber,date).then(res=>{
+      getPointListByPlateNumberAndDate(plateNumber,date).then(res=>{ //根据params中的车牌号和日期查询坐标点数组
         // console.log(res.data);
-        this.pointList = res.data;
+        this.pointList = res.data; // 将坐标点数组赋值给pointList
         for (let i = 0; i < res.data.length; i++) {
           /*console.log(res.data[i].longitude_amap);  //经度
           console.log(res.data[i].latitude_amap);   //纬度*/
+          //将坐标点的经纬度以[经度，纬度]的形式放到path数组里（高德地图规范）
           this.path.push([res.data[i].longitude_amap,res.data[i].latitude_amap]);
         }
-        // console.log(this.path);
-        this.center = this.path[0];
+        this.center = this.path[0]; //将地图中心移动到path数组的起点
+        this.startMarker.position = this.path[0]; //起点坐标为path数组的第一个
+        this.endMarker.position = this.path[this.path.length-1];  //终点坐标为path数组的最后一个
       })
-      this.listLoading = false;
     },
     goBack(){
       history.back();

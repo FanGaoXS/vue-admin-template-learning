@@ -73,7 +73,7 @@
 
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="scope">
-          <!--路由跳转-->
+          <!--路由跳转（跳转到名为Work的路由，并且将车牌号作为参数传递过去）-->
           <router-link :to="{
             name: 'Work',
             params: {
@@ -107,6 +107,7 @@ const BLCTEK_BASE_URL = '//car.blctek.com';
 
 export default {
   filters: {
+    //车牌类型过滤
     plateTypeFilter(plateType){
       // 如果是汽油车则显示灰色样式，新能源显示success样式
       const plateTypeMap = {
@@ -115,13 +116,15 @@ export default {
       };
       return plateTypeMap[plateType];
     },
+
     plateNumberFilter(plateNumber){
       return plateNumberFilter(plateNumber); //执行globalFilters里的过滤器
     }
+
   },
   data() {
     return {
-      list: [
+      list: [ //车辆对象数组
         /*{
           "vehicleId": 77,
           "carId": 96,
@@ -148,12 +151,12 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    this.fetchData(); //组件初始化完成后取得数据并且填充
   },
   methods: {
     fetchData() {
       this.listLoading = true
-      getVehicleList().then(res => {
+      getVehicleList().then(res => { //利用axios从后端获取数据然后填充
         this.list = res.data;
         this.listLoading = false;
       })

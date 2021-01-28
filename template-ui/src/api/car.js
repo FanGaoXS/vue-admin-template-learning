@@ -35,12 +35,12 @@ export function getWorkListByPlateNumber(plateNumber) {
  * @param Date
  * @returns {AxiosPromise}
  */
-export function getPointListByPlateNumberAndDate(plateNumber,date) {
+export async function getPointListByPlateNumberAndDate(plateNumber,date) {
   /*console.log(plateNumber);
   console.log(date);*/
   let config = {
     url: '/v0/loc/'+plateNumber+'/'+date,
-    type: 'GET'
+    type: 'GET',
   }
   return blctekRequest(config);
 }

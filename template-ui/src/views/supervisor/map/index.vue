@@ -2,12 +2,13 @@
   <div class="app-container">
 
     <el-header style="margin-top: 10px">
-      <el-page-header @back="goBack" content="轨迹详情">
+      <el-page-header @back="routerBack" content="轨迹详情">
       </el-page-header>
     </el-header>
 
     <el-amap vid="aMap"
              class="aMap"
+             :plugin="plugins"
              :center="center"
              :zoom="zoom"><!--高德地图地图容器组件-->
       <el-amap-polyline
@@ -165,6 +166,18 @@ export default {
   },
   data() {
     return {
+      plugins:[
+        { //地图类型插件（卫星或普通地图）
+          pName: 'MapType',
+          defaultType: 0, // 0是普通地图，1是卫星。默认是0
+        },
+        { // 比例尺插件
+          pName: 'Scale',
+        },
+        { // 左侧工具条插件
+          pName: 'ToolBar',
+        }
+      ],
       zoom: 14,  //初始缩放级别（数字越大约精细，最大18）
       center: [104.066143,30.573095],   //地图中心点坐标（默认是成都市政府）
       path:[ //符合高德地图规范的经纬度数组
@@ -208,8 +221,9 @@ export default {
         this.endMarker.position = this.path[this.path.length-1];  //终点坐标为path数组的最后一个
       })
     },
-    goBack(){
-      history.back();
+    // 路由回退
+    routerBack(){
+      this.$router.go(-1)
     }
   }
 }

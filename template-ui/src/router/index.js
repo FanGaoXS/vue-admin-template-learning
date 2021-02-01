@@ -51,10 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: {
-        title: '主面板',
-        icon: 'dashboard'
-      }
+      meta: {title: '主面板', icon: 'dashboard'}
     }]
   },
 
@@ -63,28 +60,21 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/supervisor/vehicle',
     name: 'Supervisor',
-    meta: {
-      title: '工程监理',
-      icon: 'el-icon-s-order'
-    },
+    meta: {title: '工程监理', icon: 'el-icon-s-order'},
     children: [
 
       { //车辆监理
         path: 'vehicle',
         name: 'Vehicle',
         // alwaysShow: true,
-        meta: {
-          title: '车辆监理',
-        },
+        meta: {title: '车辆监理',},
         component: () => import('@/views/supervisor/vehicle/index'),
       },
 
       { //机械监理
         path: 'machine',
         name: 'Machine',
-        meta: {
-          title: '机械监理（待开发）',
-        },
+        meta: {title: '机械监理（待开发）',},
         component: () => import('@/views/supervisor/machine/index')
       },
 
@@ -114,28 +104,21 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/car/vehicleList',
     name: 'Car',
-    meta: {
-      title: '工程用具',
-      icon: 'el-icon-s-fold'
-    },
+    meta: {title: '工程用具', icon: 'el-icon-truck'},
     children: [
 
       { //车辆列表
         path: 'vehicleList',
         name: 'VehicleList',
         // alwaysShow: true,
-        meta: {
-          title: '车辆列表（待开发）',
-        },
+        meta: { title: '车辆列表（待开发）',},
         component: () => import('@/views/car/vehicle/index'),
       },
 
       { //机械列表
         path: 'machineList',
         name: 'MachineList',
-        meta: {
-          title: '机械列表（待开发）',
-        },
+        meta: { title: '机械列表（待开发）',},
         component: () => import('@/views/car/machine/index')
       },
 
@@ -147,31 +130,60 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/model/vehicle',
     name: 'Model',
-    meta: {
-      title: '类型管理',
-      icon: 'el-icon-s-data'
-    },
+    meta: { title: '类型管理', icon: 'el-icon-s-data'},
     children: [
 
       { //车辆类型
         path: 'vehicle',
         name: 'VehicleModel',
         component: () => import('@/views/model/vehicle/index'),
-        meta: {
-          title: '车辆类型（待开发）',
-        }
+        meta: { title: '车辆类型（待开发）',}
       },
 
       { //机械类型
         path: 'machine',
         name: 'MachineModel',
         component: () => import('@/views/model/machine/index'),
-        meta: {
-          title: '机械类型（待开发）',
-        }
+        meta: { title: '机械类型（待开发）',}
       }
     ]
   },
+
+  { //相关下载
+    path: '/download',
+    component: Layout,
+    redirect: '/download/app',
+    name: 'Download',
+    meta: { title: '相关下载', icon: 'el-icon-download'},
+    alwaysShow: true,
+    children: [
+      {
+        path: 'app',
+        name: 'App',
+        component: () => import('@/views/download/app/index'),
+        meta: { title: '配置程序' }
+      }
+    ]
+  },
+
+  { //拓展功能
+    path: '/expand',
+    component: Layout,
+    redirect: '/expand/speed',
+    name: 'Expand',
+    meta: { title: '拓展功能', icon: 'el-icon-odometer' },
+    alwaysShow: true,
+    children: [
+      {
+        path: '/speed',
+        name: 'Speed',
+        component: () => import('@/views/expand/speed/index'),
+        meta: { title: '网络测速'}
+      }
+    ]
+  },
+
+
 
   {
     path: '/example',

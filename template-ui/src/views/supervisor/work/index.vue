@@ -2,7 +2,7 @@
   <div class="app-container">
 
     <el-header style="margin-top: 10px"><!--页头（返回按钮）-->
-      <el-page-header @back="goBack" content="工时详情">
+      <el-page-header @back="routerBack" content="工时详情">
       </el-page-header>
     </el-header>
 
@@ -16,7 +16,7 @@
     >
       <!--:default-sort = "{prop: 'date', order: 'descending'}"默认排序列-->
       <!--highlight-current-row选中行高亮-->
-      <el-table-column label="车牌号" align="center">
+      <el-table-column label="车牌号" align="center" width="250">
         {{ $route.params.plateNumber | plateNumberFilter }}
       </el-table-column>
       <el-table-column label="日期" align="center" prop="date">
@@ -29,21 +29,17 @@
           {{ scope.row.mileage | mileageFilter}}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" width="200">
         <template slot-scope="scope">
           <!--路由跳转-->
-          <router-link :to="{
-            name: 'Map', //跳转到名为Map的路由去
-            params: {    //携带以下参数
-              plateNumber: scope.row.plateNumber,
-              date: scope.row.date,
-              mileage: scope.row.mileage
-            }
-          }">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              轨迹详情
-            </el-button>
-          </router-link>
+          <el-button
+            type="primary"
+            size="small"
+            icon="el-icon-position"
+            @click="routerAhead(scope.row)"
+            :disabled="scope.row.mileage===0" >
+            轨迹详情
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -108,6 +104,9 @@ export default {
     })
   },
   methods: {
+    test(mileage){
+      console.log(mileage);
+    },
     fetchData() {
       this.listLoading = true
       // console.log(this.$route.params);
@@ -135,8 +134,21 @@ export default {
         this.listLoading = false;
       })
     },
-    goBack(){
-      history.back();
+    // 路由前进
+    routerAhead(row){
+      if (row.mileage===0) return;
+      this.$router.push({
+        name: 'Map', //跳转到名为Map的路由去
+        params: {    //携带以下参数
+          plateNumber: row.plateNumber,
+          date: row.date,
+          mileage: row.mileage
+        }
+      })
+    },
+    // 路由回退
+    routerBack(){
+      this.$router.go(-1)
     }
   }
 }

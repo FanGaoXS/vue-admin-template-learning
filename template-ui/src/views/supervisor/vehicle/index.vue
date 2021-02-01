@@ -45,7 +45,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="车牌号" align="center" >
+      <el-table-column label="车牌号" align="center" width="250">
         <template slot-scope="scope">
           {{ scope.row.plateNumber | plateNumberFilter }}
         </template>
@@ -71,19 +71,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="300">
+      <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
           <!--路由跳转（跳转到名为Work的路由，并且将车牌号作为参数传递过去）-->
-          <router-link :to="{
-            name: 'Work',
-            params: {
-              plateNumber: scope.row.plateNumber
-            }
-          }">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              查看工时
-            </el-button>
-          </router-link>
+          <el-button
+            type="primary"
+            size="small"
+            icon="el-icon-time"
+            @click="routerAhead(scope.row)">
+            查看工时
+          </el-button>
         </template>
       </el-table-column>
 
@@ -103,7 +100,9 @@ import {
   getVehicleList
 } from "@/api/car";
 
-const BLCTEK_BASE_URL = '//car.blctek.com';
+import {
+  IMAGE_BASE_URL
+} from "@/utils/myRequest";
 
 export default {
   filters: {
@@ -147,7 +146,7 @@ export default {
         },*/
       ],
       listLoading: true,
-      IMAGE_BASE_URL: BLCTEK_BASE_URL+'/image/car/'
+      IMAGE_BASE_URL: IMAGE_BASE_URL+'/image/car/'
     }
   },
   created() {
@@ -160,7 +159,16 @@ export default {
         this.list = res.data;
         this.listLoading = false;
       })
-    }
+    },
+    // 路由前进
+    routerAhead(row){
+      this.$router.push({
+        name: 'Work',
+        params: {
+          plateNumber: row.plateNumber
+        }
+      })
+    },
   },
 }
 </script>

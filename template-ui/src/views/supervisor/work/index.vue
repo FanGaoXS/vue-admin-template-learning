@@ -16,6 +16,13 @@
     >
       <!--:default-sort = "{prop: 'date', order: 'descending'}"默认排序列-->
       <!--highlight-current-row选中行高亮-->
+
+      <el-table-column label="序号" align="center" width="75">
+        <template slot-scope="scope">
+          {{ scope.$index+1 }}
+        </template>
+      </el-table-column>
+
       <el-table-column label="车牌号" align="center" width="250">
         {{ $route.params.plateNumber | plateNumberFilter }}
       </el-table-column>
@@ -29,7 +36,7 @@
           {{ scope.row.mileage | mileageFilter}}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200">
+      <el-table-column label="操作" align="center" width="250">
         <template slot-scope="scope">
           <!--路由跳转-->
           <el-button

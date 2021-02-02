@@ -111,7 +111,7 @@ export const constantRoutes = [
         path: 'vehicleList',
         name: 'VehicleList',
         // alwaysShow: true,
-        meta: { title: '车辆列表（待开发）',},
+        meta: { title: '车辆列表',},
         component: () => import('@/views/car/vehicle/index'),
       },
 
@@ -137,14 +137,14 @@ export const constantRoutes = [
         path: 'vehicle',
         name: 'VehicleModel',
         component: () => import('@/views/model/vehicle/index'),
-        meta: { title: '车辆类型（待开发）',}
+        meta: { title: '车辆类型',}
       },
 
       { //机械类型
         path: 'machine',
         name: 'MachineModel',
         component: () => import('@/views/model/machine/index'),
-        meta: { title: '机械类型（待开发）',}
+        meta: { title: '机械类型',}
       }
     ]
   },
@@ -175,7 +175,7 @@ export const constantRoutes = [
     alwaysShow: true,
     children: [
       {
-        path: '/speed',
+        path: 'speed',
         name: 'Speed',
         component: () => import('@/views/expand/speed/index'),
         meta: { title: '网络测速'}

@@ -7,7 +7,7 @@
       border
       fit
     >
-      <el-table-column type="expand">
+      <!--<el-table-column type="expand">
         <template slot-scope="scope">
           <el-form label-position="left" inline class="table-expand" label-width="120px">
             <el-form-item label="车牌号">
@@ -32,8 +32,8 @@
               <span>{{ scope.row.driver.driverPhone }}</span>
             </el-form-item>
             <el-form-item label="车辆照片">
-              <!--<span><img :src="'/image/car/'+props.row.imagePath" style="width: 50%;display: block;"></span>-->
-              <!--图片预览，支持放大-->
+              &lt;!&ndash;<span><img :src="'/image/car/'+props.row.imagePath" style="width: 50%;display: block;"></span>&ndash;&gt;
+              &lt;!&ndash;图片预览，支持放大&ndash;&gt;
               <el-image
                 style="width: 200px;height: 200px"
                 :src="IMAGE_BASE_URL+scope.row.car.imagePath"
@@ -43,6 +43,12 @@
             </el-form-item>
           </el-form>
         </template>
+      </el-table-column>-->
+
+      <el-table-column label="序号" align="center" width="75">
+        <template slot-scope="scope">
+          {{ scope.$index+1 }}
+        </template>
       </el-table-column>
 
       <el-table-column label="车牌号" align="center" width="250">
@@ -51,32 +57,24 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="车牌类型" align="center" >
-        <template slot-scope="scope">
-          <el-tag :type=" scope.row.plateType | plateTypeFilter ">
-            {{ scope.row.plateType }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="车辆类型" align="center" >
-        <template slot-scope="scope">
-          {{ scope.row.vehicleModel }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="驾驶员姓名" align="center" >
+      <el-table-column label="驾驶员姓名" align="center" width="150">
         <template slot-scope="scope">
           {{ scope.row.driver.driverName }}
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="200">
+      <el-table-column label="驾驶员联系方式" align="center" width="">
+        <template slot-scope="scope">
+          {{ scope.row.driver.driverPhone }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <!--路由跳转（跳转到名为Work的路由，并且将车牌号作为参数传递过去）-->
           <el-button
             type="primary"
-            size="small"
+            size="medium"
             icon="el-icon-time"
             @click="routerAhead(scope.row)">
             查看工时
@@ -106,20 +104,9 @@ import {
 
 export default {
   filters: {
-    //车牌类型过滤
-    plateTypeFilter(plateType){
-      // 如果是汽油车则显示灰色样式，新能源显示success样式
-      const plateTypeMap = {
-        '汽油车': '',
-        '新能源': 'success',
-      };
-      return plateTypeMap[plateType];
-    },
-
     plateNumberFilter(plateNumber){
       return plateNumberFilter(plateNumber); //执行globalFilters里的过滤器
     }
-
   },
   data() {
     return {

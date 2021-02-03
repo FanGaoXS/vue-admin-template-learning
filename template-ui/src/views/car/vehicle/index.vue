@@ -82,30 +82,93 @@
 
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
-          <el-button type="primary" size="medium">修改</el-button>
-          <el-button type="danger" size="medium">删除</el-button>
+          <el-button type="primary" size="medium" @click="handleUpdate(scope.row,scope.$index)">修改</el-button>
+          <el-button type="danger" size="medium" @click="handleDelete(scope.row,scope.$index)">删除</el-button>
         </template>
       </el-table-column>
 
     </el-table>
-<!--    <router-view></router-view>-->
+
+    <!--修改车辆信息的对话框-->
+    <el-dialog
+      title="修改车辆信息"
+      :visible.sync="dialogFormVisible"
+      width="35%">
+      <el-form :model="tempForm" label-width="150px">
+
+        <el-form-item label="车辆编号" >
+          <el-input :value="tempForm.vehicleId" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="车牌号" >
+          <el-input v-model="tempForm.plateNumber"></el-input>
+        </el-form-item>
+
+        <el-form-item label="车牌类型" >
+          <el-radio v-model="tempForm.plateType" label="汽油车" border>汽油车</el-radio>
+          <el-radio v-model="tempForm.plateType" label="新能源" border>新能源</el-radio>
+        </el-form-item>
+
+        <el-form-item label="车辆类型" >
+          <el-select v-model="tempForm.vehicleModel" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.modelName"
+              :label="item.modelName"
+              :value="item.modelName">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="所属工程用具编号" >
+          <el-input :value="tempForm.car.carId" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="车辆或机械" >
+          <el-input :value="tempForm.car.type" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="芯片编号" >
+          <el-input :value="tempForm.car.chipId" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="驾驶员编号" >
+          <el-input :value="tempForm.driver.driverId" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="驾驶员姓名" >
+          <el-input :value="tempForm.driver.driverName"></el-input>
+        </el-form-item>
+
+        <el-form-item label="驾驶员联系方式" >
+          <el-input :value="tempForm.driver.driverPhone"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updateVehicle()">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/table'
 
 import {
   plateNumberFilter
 } from "@/utils/globalFilters";
 
 import {
-  getVehicleList
+  deleteVehicle,
+  getVehicleList, updateVehicle
 } from "@/api/car";
 
 import {
   IMAGE_BASE_URL
 } from "@/utils/myRequest";
+import {getModelByBelong} from "@/api/model";
 
 export default {
   filters: {
@@ -126,6 +189,35 @@ export default {
   },
   data() {
     return {
+      dialogFormVisible: false,
+      options:[
+        {
+          modelName: ''
+        }
+      ],
+      tempForm: {
+        car:{},
+        driver:{}
+        /*
+        vehicleId: 77,
+        plateNumber: '川AS28T4',
+        plateType: '汽油车',
+        vehicleModel: '越野车',
+        carId: 96,
+        car: {
+          carId: 96,
+          type: '车辆',
+          driverId: 96,
+          chipId: 'C2196C0D',
+          imagePath: 'e53a7c40-8536-43b0-b700-a9bc36e4024d',
+          driver: null
+        },
+        driver: {
+          driverId: 96,
+          driverName: '旦巴顿珠',
+          driverPhone: '17308917971'
+        }*/
+      },
       list: [ //车辆对象数组
         /*{
           "vehicleId": 77,
@@ -156,8 +248,77 @@ export default {
     this.fetchData(); //组件初始化完成后取得数据并且填充
   },
   methods: {
+
+    handleUpdate(row){
+      /*console.log('handleUpdate',row)
+      console.log('handleUpdate',index)*/
+      this.dialogFormVisible = true;
+      this.tempForm = Object.assign({}, row)
+    },
+
+    handleDelete(row,index){
+      console.log('handleDelete',row)
+      console.log('handleDelete',index)
+      this.$confirm('此操作将永久删除记录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteVehicle(row,index)
+      }).catch()
+    },
+
+    updateVehicle(){
+      // console.log('updateVehicle',this.tempForm);
+      /*
+      array.findIndex(v=> v.id === array1.id);
+      这个函数就是查询数组对应的下标：返回值是 如果array.id=array1.id相等的然后该对象在array数组里的下标值
+      */
+      let index = this.list.findIndex(v=> v.vehicleId === this.tempForm.vehicleId)
+      // console.log(index);
+      updateVehicle(this.tempForm).then(res=>{
+        // console.log(res.status);
+        this.dialogFormVisible = false;
+        this.list.splice(index,1,this.tempForm); //替换掉原数组的对象
+        this.$notify({
+          type: 'success',
+          message: '修改车辆信息成功！'
+        })
+      }).catch(error=>{
+        console.log(error)
+        this.$notify({
+          type: 'error',
+          message: '修改车辆信息失败请联系管理员'+error
+        })
+      });
+    },
+
+    deleteVehicle(row,index){
+      this.$notify({
+        type: 'warning',
+        message: '暂不支持删除车辆信息！'
+      })
+      /*deleteVehicle(row).then(res=>{
+        // console.log(res);
+        this.$notify({
+          type: 'success',
+          message: '删除车辆信息成功！'
+        })
+        this.list.splice(index,1);
+      }).catch(error=> {
+        console.log(error);
+        this.$notify({
+          type: 'error',
+          message: '删除车辆信息失败请联系管理员'+error
+        })
+      })*/
+    },
+
     fetchData() {
       this.listLoading = true
+      getModelByBelong('车辆').then(res=>{
+        this.options = res.data;
+      })
       getVehicleList().then(res => { //利用axios从后端获取数据然后填充
         this.list = res.data;
         this.listLoading = false;
@@ -177,16 +338,5 @@ export default {
 </script>
 
 <style scoped>
-  .table-expand {
-    font-size: 0;
-  }
-  .table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
-  .table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 50%;
-  }
+
 </style>

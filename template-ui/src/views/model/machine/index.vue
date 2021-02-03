@@ -54,6 +54,11 @@
 
     </el-table>
 
+    <div style="margin-top: 20px">
+      <span>添加类型成功后重新扫描二维码即可看到刚刚添加的类型</span>
+      <el-divider content-position="left">Tips</el-divider>
+    </div>
+
     <!--新增或修改类型的对话框-->
     <el-dialog
       :title="titleMap[dialogType]"
@@ -87,7 +92,6 @@
         <el-button type="primary" @click="dialogType==='update'?updateModel():insertModel()">确 定</el-button>
       </div>
     </el-dialog>
-    <!--新增机械类型对话框-->
 
   </div>
 </template>
@@ -173,7 +177,7 @@
           type: 'warning'
         }).then(() => {
           this.deleteModel(row.id, index);
-        })
+        }).catch()
       },
       //  新增类型
       insertModel(){

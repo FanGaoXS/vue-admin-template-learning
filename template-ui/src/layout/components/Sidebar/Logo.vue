@@ -49,7 +49,7 @@
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #909399;
+  background: white;
   text-align: center;
   overflow: hidden;
 
@@ -67,7 +67,7 @@
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
+      color: black;
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;

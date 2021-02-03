@@ -4,6 +4,52 @@ import {
 } from "@/utils/myRequest";
 
 /**
+ *  修改车辆信息
+ * @returns {AxiosPromise}
+ */
+export function updateVehicle(row) {
+  /*console.log('updateVehicle------>')
+  console.log('row',row);*/
+  let config = {
+    url: '/car/modifyVehicle',
+    type: 'GET',
+    params: {
+      vehicleId: row.vehicleId,
+      plateNumber: row.plateNumber,
+      plateType: row.plateType,
+      vehicleModel: row.vehicleModel,
+      carId: row.car.carId,
+      chipId: row.car.chipId,
+      driverId: row.driver.driverId,
+      driverName: row.driver.driverName,
+      driverPhone: row.driver.driverPhone
+    }
+  }
+  return blctekRequest(config);
+}
+
+/**
+ * 删除车辆信息
+ * @returns {AxiosPromise}
+ */
+export function deleteVehicle(row) {
+  /*console.log('deleteVehicle------>')
+  console.log('vehicleId',row.vehicleId);
+  console.log('carId',row.car.carId);
+  console.log('driverId',row.driver.driverId);*/
+  let config = {
+    url: '/car/removeVehicle',
+    type: 'GET',
+    params: {
+      vehicleId: row.vehicleId,
+      carId: row.car.carId,
+      driverId: row.driver.driverId,
+    }
+  }
+  return blctekRequest(config);
+}
+
+/**
  *  获取车辆列表
  * @returns {AxiosPromise}
  */

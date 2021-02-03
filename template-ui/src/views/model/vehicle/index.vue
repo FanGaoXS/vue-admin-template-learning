@@ -7,6 +7,8 @@
         添加
       </el-button>
 
+
+
     </div>
 
     <el-table
@@ -29,7 +31,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="类型描述" align="center" :show-overflow-tooltip="true" width="800">
+      <el-table-column label="类型描述" :show-overflow-tooltip="true" width="800">
         <template slot-scope="scope">
           <span>{{ scope.row.modelDescription }}</span>
         </template>
@@ -53,6 +55,12 @@
       </el-table-column>
 
     </el-table>
+
+    <div style="margin-top: 20px">
+      <span>添加类型成功后重新扫描二维码即可看到刚刚添加的类型</span>
+      <el-divider content-position="left">Tips</el-divider>
+    </div>
+
 
     <!--新增或修改类型的对话框-->
     <el-dialog

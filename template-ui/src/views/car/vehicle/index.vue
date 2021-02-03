@@ -32,9 +32,9 @@
           <!--图片预览，支持放大-->
           <el-image
             style="width: 100px;height: 50px"
-            :src="IMAGE_BASE_URL+scope.row.car.imagePath"
+            :src="IMAGE_PREFIX_URL+scope.row.car.imagePath"
             fit="cover"
-            :preview-src-list="[IMAGE_BASE_URL+scope.row.car.imagePath]">
+            :preview-src-list="[IMAGE_PREFIX_URL+scope.row.car.imagePath]">
           </el-image>
         </template>
       </el-table-column>
@@ -161,14 +161,18 @@ import {
 } from "@/utils/globalFilters";
 
 import {
-  deleteVehicle,
-  getVehicleList, updateVehicle
+  deleteVehicle,  //删除车辆信息的网络请求
+  getVehicleList, //获得所有车辆的网络请求
+  updateVehicle   //修改车辆信息的网络请求
 } from "@/api/car";
 
 import {
-  IMAGE_BASE_URL
+  IMAGE_BASE_URL  //获取图片url的地址前缀
 } from "@/utils/myRequest";
-import {getModelByBelong} from "@/api/model";
+
+import {
+  getModelByBelong  //获取类型的网络请求
+} from "@/api/model";
 
 export default {
   filters: {
@@ -241,7 +245,7 @@ export default {
         },*/
       ],
       listLoading: true,
-      IMAGE_BASE_URL: IMAGE_BASE_URL+'/image/car/'
+      IMAGE_PREFIX_URL: IMAGE_BASE_URL+'/image/car/'
     }
   },
   created() {

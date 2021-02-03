@@ -76,13 +76,13 @@
         </el-input>
       </el-col>
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
-        <el-input :value="startTime | dateFilter" readonly>
-          <template slot="prepend">起点时间</template>
+        <el-input :value="endPoint | pointFilter" readonly>
+          <template slot="prepend">终点</template>
         </el-input>
       </el-col>
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
-        <el-input :value="endPoint | pointFilter" readonly>
-          <template slot="prepend">终点</template>
+        <el-input :value="startTime | dateFilter" readonly>
+          <template slot="prepend">起点时间</template>
         </el-input>
       </el-col>
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">

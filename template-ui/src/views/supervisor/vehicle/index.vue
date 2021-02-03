@@ -7,43 +7,6 @@
       border
       fit
     >
-      <!--<el-table-column type="expand">
-        <template slot-scope="scope">
-          <el-form label-position="left" inline class="table-expand" label-width="120px">
-            <el-form-item label="车牌号">
-              <span>{{ scope.row.plateNumber | plateNumberFilter  }}</span>
-            </el-form-item>
-            <el-form-item label="车牌类型">
-              <span>{{ scope.row.plateType }}</span>
-            </el-form-item>
-            <el-form-item label="车辆类型">
-              <span>{{ scope.row.vehicleModel }}</span>
-            </el-form-item>
-            <el-form-item label="车辆或机械">
-              <span>{{ scope.row.car.type }}</span>
-            </el-form-item>
-            <el-form-item label="百公里油耗量">
-              <span> 7.5（升/百公里）</span>
-            </el-form-item>
-            <el-form-item label="驾驶员姓名">
-              <span>{{ scope.row.driver.driverName }}</span>
-            </el-form-item>
-            <el-form-item label="驾驶员电话号码">
-              <span>{{ scope.row.driver.driverPhone }}</span>
-            </el-form-item>
-            <el-form-item label="车辆照片">
-              &lt;!&ndash;<span><img :src="'/image/car/'+props.row.imagePath" style="width: 50%;display: block;"></span>&ndash;&gt;
-              &lt;!&ndash;图片预览，支持放大&ndash;&gt;
-              <el-image
-                style="width: 200px;height: 200px"
-                :src="IMAGE_BASE_URL+scope.row.car.imagePath"
-                fit="cover"
-                :preview-src-list="[IMAGE_BASE_URL+scope.row.car.imagePath]">
-              </el-image>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>-->
 
       <el-table-column label="序号" align="center" width="75">
         <template slot-scope="scope">
@@ -59,15 +22,29 @@
 
       <el-table-column label="驾驶员姓名" align="center" width="150">
         <template slot-scope="scope">
-          {{ scope.row.driver.driverName }}
+          {{ scope.row.driverName }}
         </template>
       </el-table-column>
 
-      <el-table-column label="驾驶员联系方式" align="center" width="">
+      <el-table-column label="驾驶员联系方式" align="center" width="200">
         <template slot-scope="scope">
-          {{ scope.row.driver.driverPhone }}
+          {{ scope.row.driverPhone }}
         </template>
       </el-table-column>
+
+      <el-table-column label="总工作天数" align="center" >
+        <template slot-scope="scope">
+          {{ scope.row.totalWorkDays  }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="总里程数" align="center" >
+        <template slot-scope="scope">
+          {{ scope.row.totalMileage | mileageFilter }}
+        </template>
+      </el-table-column>
+
+
 
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
@@ -83,94 +60,101 @@
       </el-table-column>
 
     </el-table>
-<!--    <router-view></router-view>-->
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/table'
-
 import {
-  plateNumberFilter
+  plateNumberFilter,
+  mileageFilter
 } from "@/utils/globalFilters";
 
 import {
-  getVehicleList
+  getVehicleList,
+  getWorkListByPlateNumber,
+  getPointListByPlateNumberAndDate
 } from "@/api/car";
 
-import {
-  IMAGE_BASE_URL
-} from "@/utils/myRequest";
+import AMapLoader from "@/utils/AMap";
 
 export default {
   filters: {
     plateNumberFilter(plateNumber){
       return plateNumberFilter(plateNumber); //执行globalFilters里的过滤器
+    },
+    mileageFilter(mileage){
+      return mileageFilter(mileage);
     }
   },
   data() {
     return {
       list: [ //车辆对象数组
-        /*{
-          "vehicleId": 77,
-          "carId": 96,
-          "plateNumber": "川AS28T4",
-          "plateType": "汽油车",
-          "vehicleModel": "越野车",
-          "car": {
-            "carId": 96,
-            "type": "车辆",
-            "driverId": 96,
-            "chipId": "C2196C0D",
-            "imagePath": "e53a7c40-8536-43b0-b700-a9bc36e4024d",
-            "driver": null
-          },
-          "driver": {
-            "driverId": 96,
-            "driverName": "旦巴顿珠",
-            "driverPhone": "17308917971"
-          }
-        },*/
+
       ],
       listLoading: true,
-      IMAGE_BASE_URL: IMAGE_BASE_URL+'/image/car/'
+      map: null
     }
   },
   created() {
-    this.fetchData(); //组件初始化完成后取得数据并且填充
+    // 异步加载utils里的高德地图官方js
+    // 因为这个页面需要利用高德官方组件GeometryUtil.distanceOfLine()来计算里程
+    AMapLoader().then(AMap => {
+      this.map = AMap; // 加载成功后将异步加载的高德原生js赋给this.map
+      console.log('高德地图api加载成功');
+      this.fetchData(); //组件初始化完成后取得数据并且填充
+    }, e => {
+      console.log('高德地图api加载失败',e)
+    })
   },
   methods: {
-    fetchData() {
-      this.listLoading = true
-      getVehicleList().then(res => { //利用axios从后端获取数据然后填充
-        this.list = res.data;
+    async fetchData() {
+      // let list = [];
+      this.listLoading = true;
+      const res1 = await getVehicleList(); //同步获得车辆列表
+      let vehicleList = res1.data;
+      // console.log('vehicleList',vehicleList);
+      for (let i = 0; i < vehicleList.length; i++) {
+        let plateNumber = vehicleList[i].plateNumber
+        let driverName = vehicleList[i].driver.driverName
+        let driverPhone = vehicleList[i].driver.driverPhone
+        let res2 = await getWorkListByPlateNumber(plateNumber) //根据车牌号同步获取该车工作了多少天
+        let workList = res2.data;
+        // console.log(plateNumber+'workList',workList);
+        let totalMileage = 0;
+        let totalWorkDays = workList.length;
+        for (let j = 0; j < workList.length; j++) {
+          let date = workList[j]
+          let res3 = await getPointListByPlateNumberAndDate(plateNumber,date); //根据车牌号和日期同步获取该车当日的坐标点集合
+          let pointList = res3.data;
+          // console.log(plateNumber,date,'pointList',pointList);
+          let lineArray = []
+          for (let k = 0; k < pointList.length; k++) {
+            let point = pointList[k];
+            lineArray.push([point.longitude_amap,point.latitude_amap])
+          }
+          let mileage = this.map.GeometryUtil.distanceOfLine(lineArray); // 利用AMap的官方工具计算里程
+          totalMileage+=mileage;
+        }
+        // list.push({driverName,driverPhone,plateNumber,totalWorkDays,totalMileage})
         this.listLoading = false;
-      })
+        this.list.push({driverName,driverPhone,plateNumber,totalWorkDays,totalMileage})
+      }
+      /*this.listLoading = false;
+      this.list = list;*/
     },
     // 路由前进
     routerAhead(row){
       this.$router.push({
         name: 'Work',
         params: {
-          plateNumber: row.plateNumber
+          plateNumber: row.plateNumber,
         }
       })
-    },
+    }
   },
 }
 </script>
 
 <style scoped>
-  .table-expand {
-    font-size: 0;
-  }
-  .table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
-  .table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 50%;
-  }
+
 </style>

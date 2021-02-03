@@ -61,6 +61,7 @@ export const constantRoutes = [
     redirect: '/supervisor/vehicle',
     name: 'Supervisor',
     meta: {title: '工程监理', icon: 'el-icon-s-order'},
+    alwaysShow: true,
     children: [
 
       { //车辆监理
@@ -71,12 +72,12 @@ export const constantRoutes = [
         component: () => import('@/views/supervisor/vehicle/index'),
       },
 
-      { //机械监理
+      /*{ //机械监理
         path: 'machine',
         name: 'Machine',
         meta: {title: '机械监理（待开发）',},
         component: () => import('@/views/supervisor/machine/index')
-      },
+      },*/
 
       { //工时列表（根据车牌号）
         hidden: true,
@@ -105,6 +106,7 @@ export const constantRoutes = [
     redirect: '/car/vehicleList',
     name: 'Car',
     meta: {title: '工程用具', icon: 'el-icon-truck'},
+    alwaysShow: true,
     children: [
 
       { //车辆列表
@@ -115,12 +117,12 @@ export const constantRoutes = [
         component: () => import('@/views/car/vehicle/index'),
       },
 
-      { //机械列表
+      /*{ //机械列表
         path: 'machineList',
         name: 'MachineList',
         meta: { title: '机械列表（待开发）',},
         component: () => import('@/views/car/machine/index')
-      },
+      },*/
 
     ]
   },
@@ -185,7 +187,7 @@ export const constantRoutes = [
 
 
 
-  {
+  /*{
     path: '/example',
     component: Layout,
     redirect: '/example/table',
@@ -288,7 +290,7 @@ export const constantRoutes = [
         meta: { title: 'External Link', icon: 'link' }
       }
     ]
-  },
+  },*/
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

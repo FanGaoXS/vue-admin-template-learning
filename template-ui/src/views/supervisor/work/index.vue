@@ -26,16 +26,19 @@
       <el-table-column label="车牌号" align="center" width="250">
         {{ $route.params.plateNumber | plateNumberFilter }}
       </el-table-column>
+
       <el-table-column label="日期" align="center" prop="date">
         <template slot-scope="scope">
           {{ scope.row.date | dateFilter }}
         </template>
       </el-table-column>
+
       <el-table-column label="里程数" align="center">
         <template slot-scope="scope">
           {{ scope.row.mileage | mileageFilter}}
         </template>
       </el-table-column>
+
       <el-table-column label="操作" align="center" width="250">
         <template slot-scope="scope">
           <!--路由跳转-->

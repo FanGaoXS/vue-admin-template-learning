@@ -1,15 +1,16 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+      <div class="card-panel" @click="handleSetChartOptions()">
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
             总工作天数
           </div>
-          <h2 class="card-panel-num">{{totalWorkDays}}天</h2>
+          <!--<h2 class="card-panel-num">100天</h2>-->
+          <count-to :end-val="totalWorkDays" class="card-panel-num" suffix="天" :duration="2000"></count-to>
         </div>
       </div>
     </el-col>
@@ -18,11 +19,11 @@
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
-        <div class="card-panel-description">
+        <div class="card-panel-description" >
           <div class="card-panel-text">
             总里程数
           </div>
-          <h2 class="card-panel-num">{{totalMileage | mileageFilter }}</h2>
+          <count-to :end-val="totalMileage" class="card-panel-num" :decimals="2" suffix="公里" :duration="2000"></count-to>
         </div>
       </div>
     </el-col>
@@ -35,20 +36,20 @@
           <div class="card-panel-text">
             总耗油量（理想）
           </div>
-          <h2 class="card-panel-num">{{totalFuel}}升</h2>
+          <count-to :end-val="totalFuel" class="card-panel-num" :decimals="2" suffix="升" :duration="2000"></count-to>
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
             总驾驶员数量
           </div>
-          <h2 class="card-panel-num">{{totalDriverNumber}}人</h2>
+          <count-to :end-val="totalDriverNumber" class="card-panel-num" suffix="人" :duration="2000"></count-to>
         </div>
       </div>
     </el-col>
@@ -58,78 +59,34 @@
 <script>
 
 import CountTo from 'vue-count-to'
-import {getPointListByPlateNumberAndDate, getVehicleList, getWorkListByPlateNumber} from "@/api/car";
-import AMapLoader from "@/utils/AMap";
-import {mileageFilter} from "@/utils/globalFilters";
 
 export default {
-  filters: {
-    mileageFilter: function (mileage) {
-      return mileageFilter(mileage);
-    }
-  },
-  computed: {
-    totalFuel() {
-      return ((this.totalMileage/1000/100)*7.5).toFixed(3);
-    }
-  },
   data() {
     return {
-      map: null,
-      loading: true,
-      totalMileage: undefined,
-      totalWorkDays: undefined,
-      totalDriverNumber: undefined,
+      totalDriverNumber: 0,
+      totalMileage: 0,
+      totalWorkDays: 0,
+      totalFuel: 0
     }
   },
-  created() {
-    // 异步加载utils里的高德地图官方js
-    // 因为这个页面需要利用高德官方组件GeometryUtil.distanceOfLine()来计算里程
-    AMapLoader().then(AMap => {
-      this.map = AMap; // 加载成功后将异步加载的高德原生js赋给this.map
-      console.log('高德地图api加载成功');
-      this.fetchData(); //组件初始化完成后取得数据并且填充
-    }, e => {
-      console.log('高德地图api加载失败',e)
-    })
+  methods: {
+    fetchData(carList) {
+      // console.log('---PanelGroup---')
+      // console.log(map)
+      // console.log(carList)
+      // 从父组件获得的carList然后赋值给该组件
+      this.totalDriverNumber = carList.length;
+      for (const car of carList) {
+        this.totalMileage += car.mileage;
+        this.totalWorkDays += car.workDays;
+        this.totalFuel += car.fuel;
+      }
+    }
   },
   components: {
     CountTo
   },
-  methods: {
-    async fetchData() {
-      let res = await getVehicleList();
-      let vehicleList = res.data;
-      let totalDriverNumber = vehicleList.length;
-      let totalWorkDays = 0;
-      let totalMileage = 0;
-      for (let i = 0; i < vehicleList.length; i++) {
-        let plateNumber = vehicleList[i].plateNumber;
-        let res1 = await getWorkListByPlateNumber(plateNumber)
-        let workList = res1.data;
-        // console.log(workList)
-        let workDays = workList.length
-        totalWorkDays+=workDays
-        for (let j = 0; j < workList.length; j++) {
-          let date = workList[j];
-          let res2 = await getPointListByPlateNumberAndDate(plateNumber,date)
-          let pointList = res2.data;
-          // console.log(pointList)
-          let lineArray = []
-          for (let k = 0; k < pointList.length; k++) {
-            let point = pointList[k]
-            lineArray.push([point.longitude_amap,point.latitude_amap])
-          }
-          let mileage = this.map.GeometryUtil.distanceOfLine(lineArray); // 利用AMap的官方工具计算里程
-          totalMileage+=mileage;
-        }
-      }
-      this.loading = false;
-      this.totalDriverNumber = totalDriverNumber
-      this.totalMileage = totalMileage
-      this.totalWorkDays = totalWorkDays
-    }
-  },
+
 }
 </script>
 

@@ -7,7 +7,8 @@ import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 
-const animationDuration = 6000
+
+const animationDuration = 1000
 
 export default {
   mixins: [resize],
@@ -23,13 +24,22 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    map: {
+      type: Object,
+      default: null
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      valueMap:[
+
+      ],
+      yAxisValue: ''
     }
   },
+
   mounted() {
     this.$nextTick(() => {
       this.initChart()
@@ -42,7 +52,35 @@ export default {
     this.chart.dispose()
     this.chart = null
   },
+  watch: {
+    valueMap(newValue,oldValue){
+      let xAxisDataList = []
+      let seriesDataList = [];
+      for (const item of newValue) {
+        xAxisDataList.push(item.xAxis)
+        seriesDataList.push(item.series)
+      }
+      this.chart.setOption({
+        xAxis:[{
+          data:xAxisDataList
+        }],
+        series:[{
+          data:seriesDataList
+        }]
+      })
+    },
+    yAxisValue(newValue,oldValue){
+
+    }
+  },
   methods: {
+    fetchData(valueMap,yAxisValue){
+      /*console.log(valueMap)
+      console.log(yAxisValue)*/
+      this.valueMap = valueMap
+      this.yAxisValue = yAxisValue
+    },
+
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -62,25 +100,27 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: [ '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'],
           axisTick: {
             alignWithLabel: true
           }
-        }],
+        },
+        ],
         yAxis: [{
           type: 'value',
+          data: '值',
           axisTick: {
             show: false
           }
         }],
         series: [{
-          name: 'pageA',
+          // name: 'pageA',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [79, 52, 200, 334, 390, 330, 220],
           animationDuration
-        }, {
+        },/* {
           name: 'pageB',
           type: 'bar',
           stack: 'vistors',
@@ -94,7 +134,8 @@ export default {
           barWidth: '60%',
           data: [30, 52, 200, 334, 390, 330, 220],
           animationDuration
-        }]
+        }*/
+        ]
       })
     }
   }

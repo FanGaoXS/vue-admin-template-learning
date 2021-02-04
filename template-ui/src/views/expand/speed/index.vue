@@ -24,7 +24,7 @@
           :sm="{span: 12,offset: 6}"
           :md="{span: 8,offset: 8}">
           <el-input :value="speedArray | aveSpeedFilter" readonly>
-            <template slot="prepend">平均速率</template>
+            <template slot="prepend">{{isDownload?'下载':'上行'}}平均速率</template>
           </el-input>
         </el-col>
       </el-row>
@@ -34,7 +34,7 @@
           :sm="{span: 12,offset: 6}"
           :md="{span: 8,offset: 8}">
           <el-input :value="speedArray | maxSpeedFilter" readonly>
-            <template slot="prepend">最大速率</template>
+            <template slot="prepend">{{isDownload?'下载':'上行'}}最大速率</template>
           </el-input>
         </el-col>
       </el-row>
@@ -67,6 +67,7 @@
     data() {
       return {
         msg: 'HelloVuejs!',
+        isDownload: true,
         count: 0,         //次数
         maxCount: 100,    //最大次数
         speedArray:[],    //速率数组（用于求最大和平均）
@@ -125,6 +126,7 @@
 
       downloadButton(){
         console.log('开始测试下载速度->>>>');
+        this.isDownload = true;
         this.isError = false;
         this.count = 0;
         this.speedArray = [];
@@ -180,6 +182,7 @@
        */
       uploadButton(){
         console.log('开始测试上行速度->>>>');
+        this.isDownload = true;
         this.isError = false;
         this.count = 0;
         this.speedArray = [];
@@ -197,8 +200,8 @@
       },
       /**
        * 上传测速体：
-       *    原理就是得到客户端的时间戳，然后向服务端发起POST请求（请求体尽量大）
-       *    请求成功的时候执行回调函数，从服务端返回服务端接收到请求时候的时间戳
+       *    原理就是得到客户端的时间戳为startTime，然后向服务端发起POST请求（请求体尽量大）
+       *    请求成功的时候执行回调函数，从服务端返回的时候执行success的时候获得时间戳为endTime
        *    和contentLength（单位字节Byte），再利用contentLength除以服务端时间
        *    和客户端时间差（注意需要将时间戳的单位ms转为s）就得到标准的每秒请求多少字节
        *    根据国家宽带速率，需要乘以8，所以得到Bps。然后再根据单位换算得到响应
@@ -210,20 +213,20 @@
       upload(){
         let startTime = new Date().getTime();
         // console.log('startTime->',startTime);
-        let text =`
-          测试测试测试测试测试测试测试测试测试测试测试测试测试
-          `;
+        let text =`A`;   //一个字母大小为1字节Byte
         let totalText ;
-        for (let i = 0; i < 500000; i++) {
-          totalText+=text;
+        for (let i = 0; i < 1024 * 1024 * 2; i++) {
+          totalText+=text; //post大小为2M的请求
         }
         let formData = new FormData();
         formData.append('text',totalText);
         uploadSpeedTest(formData).then(res=>{
-          let endTime = res.data.endTime;
+          let endTime = new Date().getTime()
+          // let endTime = res.data.endTime;
           let contentLength = res.data.contentLength;
           let diffTime = endTime-startTime;
-          /*console.log('endTime->',endTime);
+          /*console.log('startTime->',startTime)
+          console.log('endTime->',endTime);
           console.log('contentLength->',contentLength);
           console.log('diffTime->',diffTime);*/
           let speedBps = (contentLength*8)/(diffTime/1000);

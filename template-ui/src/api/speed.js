@@ -7,6 +7,7 @@ export function uploadSpeedTest(formData) {
   let config = {
     url: '/car/uploadSpeedTest',
     method: 'POST',
+    timeout: 600000,
     data: formData
   }
   return blctekRequest(config);

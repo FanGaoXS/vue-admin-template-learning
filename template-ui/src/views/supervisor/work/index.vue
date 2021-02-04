@@ -107,7 +107,7 @@ export default {
     // 因为这个页面需要利用高德官方组件GeometryUtil.distanceOfLine()来计算里程
     AMapLoader().then(AMap => {
       this.map = AMap; // 加载成功后将异步加载的高德原生js赋给this.map
-      console.log('高德地图api加载成功');
+      // console.log('高德地图api加载成功');
       this.fetchData(); //获取到数据并且填充
     }, e => {
       console.log('高德地图api加载失败',e)

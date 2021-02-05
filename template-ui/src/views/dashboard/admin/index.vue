@@ -86,7 +86,12 @@
           mileage = mileage/1000 //单位米->公里
           fuel = (mileage/100)*7.5 //单位升/百公里
           // console.log(plateNumber,workDays,mileage.toFixed(2),fuel.toFixed(2))
-          carList.push({plateNumber,workDays,mileage,fuel})
+          carList.push({
+            plateNumber,
+            workDays,
+            mileage,
+            fuel
+          })
         }
         let mileageMap = [];
         let workDaysMap = [];
@@ -94,7 +99,7 @@
         for (const car of carList) {
           mileageMap.push({
             xAxis:car.plateNumber,
-            series:car.mileage
+            series:(car.mileage).toFixed(2)
           })
           workDaysMap.push({
             xAxis:car.plateNumber,
@@ -102,14 +107,14 @@
           })
           fuelMap.push({
             xAxis:car.plateNumber,
-            series:car.fuel
+            series:(car.fuel).toFixed(2)
           })
         }
         // 将carList传递给panelGroup和barChart两个子组件（调用两个组件的fetchData方法）
         this.$refs.panelGroup.fetchData(carList);
         this.$refs.barChart1.fetchData(mileageMap,'里程（单位：公里）');
         this.$refs.barChart2.fetchData(workDaysMap,'总工作天数（单位：天）');
-        this.$refs.barChart3.fetchData(fuelMap,'理想油耗（单位：公里）');
+        this.$refs.barChart3.fetchData(fuelMap,'理想油耗（单位：升）');
       }
     },
     data() {

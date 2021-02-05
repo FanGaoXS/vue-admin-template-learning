@@ -25,10 +25,6 @@ export default {
       type: String,
       default: '300px'
     },
-    map: {
-      type: Object,
-      default: null
-    }
   },
   data() {
     return {
@@ -36,7 +32,7 @@ export default {
       valueMap:[
 
       ],
-      yAxisValue: ''
+      titleText: ''
     }
   },
 
@@ -69,30 +65,37 @@ export default {
         }]
       })
     },
-    yAxisValue(newValue,oldValue){
-
+    titleText(newValue,oldValue){
+      this.chart.setOption({
+        title: {
+          text: newValue
+        }
+      })
     }
   },
   methods: {
-    fetchData(valueMap,yAxisValue){
+    fetchData(valueMap,titleText){
       /*console.log(valueMap)
       console.log(yAxisValue)*/
       this.valueMap = valueMap
-      this.yAxisValue = yAxisValue
+      this.titleText = titleText
     },
 
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
+        title:{
+          text: '标题'
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
+          },
         },
         grid: {
-          top: 10,
+          top: 50,
           left: '2%',
           right: '2%',
           bottom: '3%',
@@ -108,7 +111,6 @@ export default {
         ],
         yAxis: [{
           type: 'value',
-          data: '值',
           axisTick: {
             show: false
           }
@@ -118,24 +120,13 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
+          label: {
+            show: true,
+            position: 'outside'
+          },
           data: [79, 52, 200, 334, 390, 330, 220],
           animationDuration
-        },/* {
-          name: 'pageB',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [80, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: 'pageC',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [30, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }*/
-        ]
+        }]
       })
     }
   }

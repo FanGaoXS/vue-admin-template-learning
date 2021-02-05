@@ -23,7 +23,7 @@
           <div class="card-panel-text">
             总里程数
           </div>
-          <count-to :end-val="totalMileage" class="card-panel-num" :decimals="2" suffix="公里" :duration="2000"></count-to>
+          <count-to :end-val="totalMileage" class="card-panel-num"  suffix="公里" :duration="2000"></count-to>
         </div>
       </div>
     </el-col>
@@ -36,7 +36,7 @@
           <div class="card-panel-text">
             总耗油量（理想）
           </div>
-          <count-to :end-val="totalFuel" class="card-panel-num" :decimals="2" suffix="升" :duration="2000"></count-to>
+          <count-to :end-val="totalFuel" class="card-panel-num"  suffix="升" :duration="2000"></count-to>
         </div>
       </div>
     </el-col>
@@ -72,7 +72,6 @@ export default {
   methods: {
     fetchData(carList) {
       // console.log('---PanelGroup---')
-      // console.log(map)
       // console.log(carList)
       // 从父组件获得的carList然后赋值给该组件
       this.totalDriverNumber = carList.length;

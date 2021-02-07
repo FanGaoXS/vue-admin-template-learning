@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetChartOptions()">
+      <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
@@ -9,7 +9,6 @@
           <div class="card-panel-text">
             总工作天数
           </div>
-          <!--<h2 class="card-panel-num">100天</h2>-->
           <count-to :end-val="totalWorkDays" class="card-panel-num" suffix="天" :duration="2000"></count-to>
         </div>
       </div>

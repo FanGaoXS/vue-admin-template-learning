@@ -4,7 +4,8 @@
 
 <script>
 import echarts from 'echarts'
-require('echarts/theme/macarons') // echarts theme
+// require('echarts/theme/macarons') // echarts theme
+require('./chartTheme/westeros')
 import resize from './mixins/resize'
 
 
@@ -29,10 +30,8 @@ export default {
   data() {
     return {
       chart: null,
-      valueMap:[
-
-      ],
-      titleText: ''
+      options: [],
+      title: {}
     }
   },
 
@@ -49,7 +48,7 @@ export default {
     this.chart = null
   },
   watch: {
-    valueMap(newValue,oldValue){
+    options(newValue,oldValue){
       let xAxisDataList = []
       let seriesDataList = [];
       for (const item of newValue) {
@@ -65,25 +64,28 @@ export default {
         }]
       })
     },
-    titleText(newValue,oldValue){
+    title(newValue,oldValue){
+      // console.log(newValue)
       this.chart.setOption({
         title: {
-          text: newValue
+          text: newValue.text,
+          subtext: newValue.subtext
         }
       })
     }
   },
   methods: {
-    fetchData(valueMap,titleText){
-      /*console.log(valueMap)
-      console.log(yAxisValue)*/
-      this.valueMap = valueMap
-      this.titleText = titleText
+    fetchData(options,title){
+      // 从父组件里接收到的值然后赋值给data发生变化，从而watcher生效然后setOptions数据到echart上
+      /*console.log(options)
+      console.log(title)*/
+      this.options = options
+      this.title = title
     },
 
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-
+      // this.chart = echarts.init(this.$el, 'macarons')
+      this.chart = echarts.init(this.$el, 'westeros')
       this.chart.setOption({
         title:{
           text: '标题'
@@ -95,7 +97,7 @@ export default {
           },
         },
         grid: {
-          top: 50,
+          top: 80,
           left: '2%',
           right: '2%',
           bottom: '3%',
@@ -103,7 +105,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: [ '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'],
+          data: [ /*'星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'*/ ],
           axisTick: {
             alignWithLabel: true
           }
@@ -124,7 +126,7 @@ export default {
             show: true,
             position: 'outside'
           },
-          data: [79, 52, 200, 334, 390, 330, 220],
+          data: [/*79, 52, 200, 334, 390, 330, 220*/],
           animationDuration
         }]
       })

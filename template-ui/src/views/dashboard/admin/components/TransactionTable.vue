@@ -1,39 +1,31 @@
 <template>
   <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Order_No" min-width="200">
+    <el-table-column label="车牌号" width="250">
       <template slot-scope="scope">
-        {{ scope.row.order_no | orderNoFilter }}
+        {{ scope.row.plateNumber | plateNumberFilter}}
       </template>
     </el-table-column>
-    <el-table-column label="Price" width="195" align="center">
+    <el-table-column label="驾驶员姓名" width="100" align="center">
       <template slot-scope="scope">
-        ¥{{ scope.row.price | toThousandFilter }}
+        {{ scope.row.driver.driverName  }}
       </template>
     </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
-        </el-tag>
+    <el-table-column label="驾驶员联系方式" min-width="200" align="center">
+      <template slot-scope="scope">
+        {{ scope.row.driver.driverPhone  }}
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
-/*import { transactionList } from '@/api/remote-search'*/
+
+import {plateNumberFilter} from "@/utils/globalFilters";
 
 export default {
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        success: 'success',
-        pending: 'danger'
-      }
-      return statusMap[status]
-    },
-    orderNoFilter(str) {
-      return str.substring(0, 30)
+    plateNumberFilter(plateNumber){
+      return plateNumberFilter(plateNumber)
     }
   },
   data() {
@@ -45,10 +37,10 @@ export default {
     this.fetchData()
   },
   methods: {
-    fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
-      })
+    fetchData(list) {
+      // console.log(list)
+      // 从父组件里获取到的数据然后只取前面5个
+      this.list = list.splice(0,5);
     }
   }
 }

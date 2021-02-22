@@ -49,6 +49,8 @@ export default {
   },
   watch: {
     options(newValue,oldValue){
+      /*console.log(oldValue)
+      console.log(newValue)*/
       let xAxisDataList = []
       let seriesDataList = [];
       for (const item of newValue) {
@@ -65,7 +67,8 @@ export default {
       })
     },
     title(newValue,oldValue){
-      // console.log(newValue)
+      /*console.log(oldValue)
+      console.log(newValue)*/
       this.chart.setOption({
         title: {
           text: newValue.text,
@@ -84,11 +87,13 @@ export default {
     },
 
     initChart() {
+      // 初始化条状图的样式
       // this.chart = echarts.init(this.$el, 'macarons')
       this.chart = echarts.init(this.$el, 'westeros')
       this.chart.setOption({
         title:{
-          text: '标题'
+          text: '标题',
+          subtext: '副标题'
         },
         tooltip: {
           trigger: 'axis',
@@ -105,7 +110,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: [ /*'星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'*/ ],
+          data: [ '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天' ],
           axisTick: {
             alignWithLabel: true
           }
@@ -126,7 +131,7 @@ export default {
             show: true,
             position: 'outside'
           },
-          data: [/*79, 52, 200, 334, 390, 330, 220*/],
+          data: [79, 52, 200, 334, 390, 330, 220],
           animationDuration
         }]
       })

@@ -30,11 +30,11 @@ export default {
   },
   data() {
     return {
-      list: null
+      list: []
     }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     fetchData(list) {

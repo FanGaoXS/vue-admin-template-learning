@@ -185,6 +185,23 @@ export const constantRoutes = [
     ]
   },
 
+  {//测试
+    path: '/test',
+    component: Layout,
+    name: 'Test',
+    redirect: '/test/test1',
+    meta: { title: '功能测试', icon: 'el-icon-setting' },
+    alwaysShow: true,
+    children: [
+      {//测试1
+        path: 'test1',
+        name: 'Test1',
+        component: () => import('@/views/test/test1/index'),
+        meta: { title: '测试1'}
+      }
+    ]
+  },
+
 
 
   /*{

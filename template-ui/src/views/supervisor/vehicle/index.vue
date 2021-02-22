@@ -44,12 +44,11 @@
         </template>
       </el-table-column>
 
-
-
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <!--路由跳转（跳转到名为Work的路由，并且将车牌号作为参数传递过去）-->
           <el-button
+            :disabled="scope.row.totalMileage===0"
             type="primary"
             size="medium"
             icon="el-icon-time"
@@ -88,9 +87,7 @@ export default {
   },
   data() {
     return {
-      list: [ //车辆对象数组
-
-      ],
+      list: [],//车辆对象数组
       listLoading: true,
       map: null
     }
@@ -108,7 +105,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      // let list = [];
+      let tempList = [];
       this.listLoading = true;
       const res1 = await getVehicleList(); //同步获得车辆列表
       let vehicleList = res1.data;
@@ -135,15 +132,25 @@ export default {
           let mileage = this.map.GeometryUtil.distanceOfLine(lineArray); // 利用AMap的官方工具计算里程
           totalMileage+=mileage;
         }
-        // list.push({driverName,driverPhone,plateNumber,totalWorkDays,totalMileage})
-        this.listLoading = false;
-        this.list.push({driverName,driverPhone,plateNumber,totalWorkDays,totalMileage})
+        tempList.push({driverName,driverPhone,plateNumber,totalWorkDays,totalMileage})
+        /*
+        * 将数据一个一个一次通过数组的push方法动态放置进vue上的list
+        * （list会一条一条记录的刷新）
+        * */
+        /*this.list.push({driverName,driverPhone,plateNumber,totalWorkDays,totalMileage})
+        this.listLoading = false;*/
       }
-      /*this.listLoading = false;
-      this.list = list;*/
+      /*
+      * 直接将临时数组的数据赋值给挂载到vue上的list
+      * （list全部获取完成后页面才渲染出数据）
+      * 两种方法只是视觉效果上有差异
+      * */
+      this.list = tempList;
+      this.listLoading = false;
     },
     // 路由前进
     routerAhead(row){
+      if (row.totalMileage===0) return
       this.$router.push({
         name: 'Work',
         params: {

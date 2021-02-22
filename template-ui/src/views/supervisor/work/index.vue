@@ -16,10 +16,9 @@
     >
       <!--:default-sort = "{prop: 'date', order: 'descending'}"默认排序列-->
       <!--highlight-current-row选中行高亮-->
-
       <el-table-column label="序号" align="center" width="75">
         <template slot-scope="scope">
-          {{ scope.$index+1 }}
+          {{ scope.$index+1+(listQuery.currentPage-1)*listQuery.pageSize }}
         </template>
       </el-table-column>
 
@@ -53,6 +52,17 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      style="margin-top: 15px"
+      background
+      :total="tempList.length"
+      :page-size="listQuery.pageSize"
+      :current-page="listQuery.currentPage"
+      @current-change="handleCurrentChange"
+      layout="total, prev, pager, next">
+    </el-pagination>
+
   </div>
 </template>
 
@@ -93,11 +103,18 @@ export default {
   },
   data() {
     return {
+      tempList: [
+
+      ],
       workList: [ //工时对象数组
         /*plateNumber,
         date,
         mileage*/
       ],
+      listQuery:{
+        currentPage: 1,
+        pageSize: 10
+      },
       listLoading: true,
       map: null
     }
@@ -114,35 +131,32 @@ export default {
     })
   },
   methods: {
-    test(mileage){
-      console.log(mileage);
+    handleCurrentChange(currentPage){
+      // console.log(currentPage)
+      this.listQuery.currentPage = currentPage
+      let startNumber = (currentPage-1)*this.listQuery.pageSize
+      let endNumber = currentPage*this.listQuery.pageSize
+      this.workList = this.tempList.slice(startNumber,endNumber)
     },
-    fetchData() {
+    async fetchData() {
       this.listLoading = true
       // console.log(this.$route.params);
       let plateNumber = this.$route.params.plateNumber;
-      getWorkListByPlateNumber(plateNumber).then(res=>{
-        // console.log(res.data);
-        for (let date of res.data) {
-          // console.log(date);
-          getPointListByPlateNumberAndDate(plateNumber,date).then(res=>{
-            // console.log('res.data',res.data);
-            let lineArray = []; //初始化一个临时数组
-            for (let point of res.data) {
-              // console.log('point',point);
-              /*console.log('longitude_amap',point.longitude_amap);
-              console.log('latitude_amap',point.latitude_amap);*/
-              lineArray.push([point.longitude_amap,point.latitude_amap]); //将坐标点的经纬度赋值按顺序添加到临时数组中
-            }
-            // console.log(lineArray);
-            //将临时数组扔到高德原生js的路径长度计算工具（此函数是异步！！切记）
-            let mileage = this.map.GeometryUtil.distanceOfLine(lineArray);
-            // 将车牌号、日期、里程按顺序push到workList数组中
-            this.workList.push({plateNumber, date, mileage});
-          })
+      const {data:workList} = await getWorkListByPlateNumber(plateNumber)
+      // console.log(workList)
+      for (const date of workList) {
+        const {data:pointList} = await getPointListByPlateNumberAndDate(plateNumber,date)
+        // console.log(pointList)
+        let lineArray = []
+        for (const point of pointList) {
+          lineArray.push([point.longitude_amap,point.latitude_amap]); //将坐标点的经纬度赋值按顺序添加到临时数组中
         }
-        this.listLoading = false;
-      })
+        //将临时数组扔到高德原生js的路径长度计算工具（此函数是异步！！切记）
+        let mileage = this.map.GeometryUtil.distanceOfLine(lineArray);
+        this.tempList.push({plateNumber, date, mileage});
+      }
+      this.listLoading = false;
+      this.workList =this.tempList.slice(0,this.listQuery.pageSize) //组件初始化时
     },
     // 路由前进
     routerAhead(row){

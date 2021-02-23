@@ -2,7 +2,7 @@
   <div class="app-container">
 
     <el-header style="margin-top: 10px"><!--页头（返回按钮）-->
-      <el-page-header @back="routerBack" content="工时详情">
+      <el-page-header @back="routerBack" content="工时列表">
       </el-page-header>
     </el-header>
 

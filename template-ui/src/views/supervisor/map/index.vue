@@ -46,7 +46,7 @@
 
     </el-amap>
 
-    <el-row :gutter="10"><!--响应式第一行-->
+    <el-row :gutter="10" style="margin-top: 15px"><!--响应式第一行-->
       <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
         <el-input :value="plateNumber | plateNumberFilter" readonly>
           <template slot="prepend">车牌号</template>

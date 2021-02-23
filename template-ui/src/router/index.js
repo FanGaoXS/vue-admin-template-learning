@@ -81,19 +81,23 @@ export const constantRoutes = [
 
       { //工时列表（根据车牌号）
         hidden: true,
-        breadcrumb: false,
         path: 'work/:plateNumber',
         name: 'Work',
-        meta: {title: '工时列表'},
+        meta: {
+          title: '工时列表',
+          activeMenu: '/supervisor/vehicle'
+        },
         component: () => import('@/views/supervisor/work/index')
       },
 
       { //轨迹详情
         hidden: true,
-        breadcrumb: false,
         path: 'map/:plateNumber/:date/:mileage',
         name: 'Map',
-        meta: { title: '轨迹详情' },
+        meta: {
+          title: '轨迹详情',
+          activeMenu: '/supervisor/vehicle'
+        },
         component: () => import('@/views/supervisor/map/index')
       }
 
@@ -185,7 +189,7 @@ export const constantRoutes = [
     ]
   },
 
-  {//测试
+  /*{//测试
     path: '/test',
     component: Layout,
     name: 'Test',
@@ -200,7 +204,7 @@ export const constantRoutes = [
         meta: { title: '测试1'}
       }
     ]
-  },
+  },*/
 
 
 

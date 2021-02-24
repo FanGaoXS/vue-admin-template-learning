@@ -150,7 +150,7 @@ export default {
     // 将标准UTC时间转为易读的时间
     dateFilter(date){
       let objectDate = new Date(date);
-      return objectDate.toLocaleDateString()+' '+objectDate.toLocaleTimeString();
+      return objectDate.toLocaleString();
     },
     // 经纬度过滤器
     pointFilter(point){
@@ -203,23 +203,20 @@ export default {
     this.fetchData();
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       let plateNumber = this.$route.params.plateNumber;
       let date = this.$route.params.date;
-      // let mileage = this.$route.params.mileage;
-      getPointListByPlateNumberAndDate(plateNumber,date).then(res=>{ //根据params中的车牌号和日期查询坐标点数组
-        // console.log(res.data);
-        this.pointList = res.data; // 将坐标点数组赋值给pointList
-        for (let i = 0; i < res.data.length; i++) {
-          /*console.log(res.data[i].longitude_amap);  //经度
-          console.log(res.data[i].latitude_amap);   //纬度*/
-          //将坐标点的经纬度以[经度，纬度]的形式放到path数组里（高德地图规范）
-          this.path.push([res.data[i].longitude_amap,res.data[i].latitude_amap]);
-        }
-        this.center = this.path[0]; //将地图中心移动到path数组的起点
-        this.startMarker.position = this.path[0]; //起点坐标为path数组的第一个
-        this.endMarker.position = this.path[this.path.length-1];  //终点坐标为path数组的最后一个
-      })
+      const { data:pointList } = await getPointListByPlateNumberAndDate(plateNumber,date)
+      for (let i = 0; i < pointList.length; i++) {
+        /*console.log(pointList[i].longitude_amap);  //经度
+        console.log(pointList[i].latitude_amap);   //纬度*/
+        //将坐标点的经纬度以[经度，纬度]的形式放到path数组里（高德地图规范）
+        this.path.push([pointList[i].longitude_amap,pointList[i].latitude_amap]);
+      }
+      this.pointList = pointList
+      this.center = this.path[0]; //将地图中心移动到path数组的起点
+      this.startMarker.position = this.path[0]; //起点坐标为path数组的第一个
+      this.endMarker.position = this.path[this.path.length-1];  //终点坐标为path数组的最后一个
     },
     // 路由回退
     routerBack(){

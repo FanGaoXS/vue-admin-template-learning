@@ -76,15 +76,15 @@
         let mileage = 0;
         let fuel;
         let carList = []
-        const res = await getVehicleList()
-        for (const vehicle of res.data) {
+        const { data:vehicleList } = await getVehicleList()
+        for (const vehicle of vehicleList) {
           plateNumber = vehicle.plateNumber;
-          const res2 = await getWorkListByPlateNumber(plateNumber)
-          workDays = res2.data.length
-          for (const date of res2.data) {
-            const res3 = await getPointListByPlateNumberAndDate(plateNumber,date)
+          const { data:workList } = await getWorkListByPlateNumber(plateNumber)
+          workDays = workList.length
+          for (const date of workList) {
+            const { data:pointList } = await getPointListByPlateNumberAndDate(plateNumber,date)
             let lineArray = [];
-            for (const point of res3.data) {
+            for (const point of pointList) {
               lineArray.push([point.longitude_amap,point.latitude_amap])
             }
             mileage += this.map.GeometryUtil.distanceOfLine(lineArray);
@@ -128,7 +128,7 @@
         this.$refs.workDaysBarChart.fetchData(workDaysOptions,workDaysTitle);
         this.$refs.mileageBarChart.fetchData(mileageOptions,mileageTitle);
         this.$refs.fuelBarChart.fetchData(fuelOptions,fuelTitle);
-        this.$refs.driverTransTable.fetchData(res.data);
+        this.$refs.driverTransTable.fetchData(vehicleList);
         this.loading = false;
       }
     },

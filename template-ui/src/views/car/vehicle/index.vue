@@ -261,8 +261,8 @@ export default {
     },
 
     handleDelete(row,index){
-      console.log('handleDelete',row)
-      console.log('handleDelete',index)
+      /*console.log('handleDelete',row)
+      console.log('handleDelete',index)*/
       this.$confirm('此操作将永久删除记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -318,15 +318,13 @@ export default {
       })*/
     },
 
-    fetchData() {
+    async fetchData() {
       this.listLoading = true
-      getModelByBelong('车辆').then(res=>{
-        this.options = res.data;
-      })
-      getVehicleList().then(res => { //利用axios从后端获取数据然后填充
-        this.list = res.data;
-        this.listLoading = false;
-      })
+      const { data:modelList } = await getModelByBelong('车辆') //同步获取类型列表
+      this.options = modelList;
+      const { data:vehicleList } = await getVehicleList() //同步获取车辆列表
+      this.list = vehicleList;
+      this.listLoading = false;
     },
     // 路由前进
     routerAhead(row){

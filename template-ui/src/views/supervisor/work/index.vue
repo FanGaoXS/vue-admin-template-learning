@@ -142,10 +142,10 @@ export default {
       this.listLoading = true
       // console.log(this.$route.params);
       let plateNumber = this.$route.params.plateNumber;
-      const {data:workList} = await getWorkListByPlateNumber(plateNumber)
+      const { data:workList } = await getWorkListByPlateNumber(plateNumber)
       // console.log(workList)
       for (const date of workList) {
-        const {data:pointList} = await getPointListByPlateNumberAndDate(plateNumber,date)
+        const { data:pointList } = await getPointListByPlateNumberAndDate(plateNumber,date)
         // console.log(pointList)
         let lineArray = []
         for (const point of pointList) {

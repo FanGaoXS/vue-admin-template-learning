@@ -137,13 +137,11 @@
     },
     methods: {
       // 填充数据
-      fetchData() {
+      async fetchData() {
         this.listLoading = true
-        getModelByBelong(this.modelBelong).then(res=>{
-          // console.log(res.data);
-          this.list = res.data;
-          this.listLoading = false;
-        })
+        const { data:modelList } = await getModelByBelong(this.modelBelong)
+        this.list = modelList;
+        this.listLoading = false;
       },
       // 清空临时表单
       resetTemp(){

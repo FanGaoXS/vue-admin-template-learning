@@ -107,22 +107,19 @@ export default {
     async fetchData() {
       let tempList = [];
       this.listLoading = true;
-      const res1 = await getVehicleList(); //同步获得车辆列表
-      let vehicleList = res1.data;
+      const { data:vehicleList } = await getVehicleList(); //同步获得车辆列表
       // console.log('vehicleList',vehicleList);
       for (let i = 0; i < vehicleList.length; i++) {
         let plateNumber = vehicleList[i].plateNumber
         let driverName = vehicleList[i].driver.driverName
         let driverPhone = vehicleList[i].driver.driverPhone
-        let res2 = await getWorkListByPlateNumber(plateNumber) //根据车牌号同步获取该车工作了多少天
-        let workList = res2.data;
+        const { data:workList } = await getWorkListByPlateNumber(plateNumber) //根据车牌号同步获取该车工作了多少天
         // console.log(plateNumber+'workList',workList);
         let totalMileage = 0;
         let totalWorkDays = workList.length;
         for (let j = 0; j < workList.length; j++) {
           let date = workList[j]
-          let res3 = await getPointListByPlateNumberAndDate(plateNumber,date); //根据车牌号和日期同步获取该车当日的坐标点集合
-          let pointList = res3.data;
+          const { data:pointList } = await getPointListByPlateNumberAndDate(plateNumber,date); //根据车牌号和日期同步获取该车当日的坐标点集合
           // console.log(plateNumber,date,'pointList',pointList);
           let lineArray = []
           for (let k = 0; k < pointList.length; k++) {
